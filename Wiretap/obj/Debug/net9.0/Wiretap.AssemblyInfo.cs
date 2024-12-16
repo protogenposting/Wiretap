@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Wiretap")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+197d7d94129213e4c17e4a0cf59e75312a1afec9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cf1037f49d2a39cf278d965012a1d1896c83aa34")]
 [assembly: System.Reflection.AssemblyProductAttribute("Wiretap")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Wiretap")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
