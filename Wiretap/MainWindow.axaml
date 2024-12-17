@@ -5,5 +5,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Wiretap.MainWindow"
         Title="Wiretap">
-    Welcome to SUS
+    <StackPanel Margin="20">
+        <Button Click="ClickHandler">Press Me!</Button>
+        <TextBlock Margin="0 10" x:Name="message">Ready...</TextBlock>
+    </StackPanel>
 </Window>
