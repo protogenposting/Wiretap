@@ -185,6 +185,8 @@ app.post(apiPath+'fileUpload', upload.single('file'),(req,res) => {
         console.log('File was deleted');
     });
 })
+
+//TODO:make it so you can download files too
 //#endregion
 
 /**
