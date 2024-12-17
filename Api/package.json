@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "nodemon": "^3.1.9",
-    "sqlite3": "^5.1.7"
+    "better-sqlite3": "^11.7.0",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.9"
   }
 }

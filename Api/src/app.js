@@ -53,12 +53,12 @@ const query = `
         id INTEGER PRIMARY KEY UNIQUE,
         name STRING NOT NULL,
         username STRING NOT NULL UNIQUE,
-        password STRING NOT NULL,
+        password STRING NOT NULL
     );
     CREATE TABLE IF NOT EXISTS files (
         id INTEGER PRIMARY KEY UNIQUE,
         name STRING NOT NULL,
-        uploader INTEGER NOT NULL
+        uploader STRING NOT NULL
     );
 `;
 
@@ -70,51 +70,34 @@ db.exec(query)
 
 //get all the users
 app.get(apiPath+'users',(req,res) => {
-    //SESSION KEY CODE, USE THIS SOMEWHERE ELSE LATER
-    const session = JSON.parse(req.headers.session.toString())
-    console.log(session)
-    console.log(verify_session_key(session.session,session.username))
-    if(verify_token(req.headers.authorization))
-    {
-        const users = db.prepare('SELECT * FROM users').all();
+    const users = db.prepare('SELECT * FROM users').all();
 
-        console.log(users);
+    console.log(users);
 
-        remove_passwords(users)
+    remove_passwords(users)
 
-        res.json({users: users})
-    }
-    else
-    {
-        res.send("nuh uh tell me the secret password!!!")
-    }
+    res.json({users: users})
 })
 
 //get a user by name
 app.get(apiPath+'user/:name',(req,res) => {
-    if(verify_token(req.headers.authorization))
-    {
-        const user = db.prepare(`
-            SELECT * FROM users WHERE username = ?
-            `).get(req.params.name);
+    const user = db.prepare(`
+        SELECT * FROM users WHERE username = ?
+        `).get(req.params.name);
 
-        console.log(user);
+    console.log(user);
 
-        delete user.password
+    delete user.password
 
-        res.json({user: user})
-    }
-    else
-    {
-        res.send("nuh uh tell me the secret password!!!")
-    }
+    res.json({user: user})
 })
 
 //delete a user
 app.delete(apiPath+'user/:name',(req,res) => {
-    if(verify_token(req.headers.authorization))
+    const session = JSON.parse(req.headers.session.toString())
+    if(verify_session_key(session.session,session.username) && session.username == req.body.username)
     {
-        db.prepare(`DELETE * FROM users WHERE username = ?`).run();
+        db.prepare(`DELETE * FROM users WHERE username = ?`).run(req.body.username);
 
         res.send("Ok did that");
     }
@@ -126,58 +109,44 @@ app.delete(apiPath+'user/:name',(req,res) => {
 
 //create a user :3
 app.post(apiPath+'newUser',(req,res) => {
-    if(verify_token(req.headers.authorization))
-    {
-        console.log(req.body)
+    console.log(req.body)
 
-        if(req.body.name == "" || req.body.password == "")
-        {
-            req.send("UNIQUE")
-            return 0
-        }
-        
-        const insertData = db.prepare("INSERT INTO users (name, username, password, pp) VALUES (?, ?, ?, ?)");
-        
-        var result = insertData.run(req.body.name,req.body.username,req.body.password,0)
-        
-        res.send(result)
-    }
-    else
+    if(req.body.name == "" || req.body.password == "")
     {
-        res.send("nuh uh tell me the secret password!!!")
+        req.send("UNIQUE")
+        return 0
     }
+    
+    const insertData = db.prepare("INSERT INTO users (name, username, password, pp) VALUES (?, ?, ?, ?)");
+    
+    var result = insertData.run(req.body.name,req.body.username,req.body.password,0)
+    
+    res.send(result)
 })
 
 //create a login session
 app.post(apiPath+'login',(req,res) => {
-    if(verify_token(req.headers.authorization))
+    console.log(req.body)
+    
+    const user = db.prepare(`
+        SELECT * FROM users WHERE username = ? AND password = ?
+        `).get(req.body.name,req.body.password);
+    
+    
+    if(user == null)
     {
-        console.log(req.body)
-        
-        const user = db.prepare(`
-            SELECT * FROM users WHERE username = ? AND password = ?
-            `).get(req.body.name,req.body.password);
-        
-        
-        if(user == null)
-        {
-            var sessionID = "0"
-            res.send({sessionID: sessionID})
-        }
-        else
-        {
-            var sessionID = generate_session_key(120)
-            while(currentSessions.indexOf(sessionID)>-1)
-            {
-                sessionID = generate_session_key(120)
-            }
-            currentSessions.push(new Session(req.body.name,sessionID));
-            res.send({sessionID: sessionID})
-        }
+        var sessionID = "0"
+        res.sendStatus(404)
     }
     else
     {
-        res.send("nuh uh tell me the secret password!!!")
+        var sessionID = generate_session_key(120)
+        while(currentSessions.indexOf(sessionID)>-1)
+        {
+            sessionID = generate_session_key(120)
+        }
+        currentSessions.push(new Session(req.body.name,sessionID));
+        res.send({sessionID: sessionID})
     }
 })
 
@@ -219,17 +188,7 @@ app.post(apiPath+'fileUpload', upload.single('file'),(req,res) => {
 //#endregion
 
 /**
- * Check if the provided toek is the same as our actual token
- * @param {*} _token the token from the request
- * @returns true or false depending on if the token matches
- */
-function verify_token(_token)
-{
-    return _token == "A92n5nIlklaPosfbngfbsYYhfkskaNuuHGFNJSA"
-}
-
-/**
- * verify if the session token and username match any of the other sessions, wip currently
+ * verify if the session token and username match any of the other sessions
  * @param {*} _token 
  * @param {*} _username 
  * @returns boolean of whether the session key is accurate or not
