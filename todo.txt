@@ -1,0 +1,5 @@
+use the command 
+
+npx create-react-app Client
+
+at home to create the app
