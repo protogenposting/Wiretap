@@ -22,6 +22,10 @@ public partial class MainWindow : Window
         {
             message.Text = "Please Choose A Unique Username!";
         }
+        else if(response.Contains("NOT NULL"))
+        {
+            message.Text = "PUT A USERNAME AND PASSWORD YOU FUCK";
+        }
         else
         {
             message.Text = "Welcome to Wiretap, Please Press Login";
@@ -42,6 +46,8 @@ public partial class MainWindow : Window
             var result = (JObject)JsonConvert.DeserializeObject(response);
 
             Api.sessionID = result["sessionID"].Value<string>();
+
+            message.Text = "Logged In, WELCOME!";
         }
     }
 }
