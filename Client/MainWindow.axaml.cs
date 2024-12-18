@@ -14,7 +14,7 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
-    public async void SignUp(object sender, RoutedEventArgs args)
+    public async void signUp(object sender, RoutedEventArgs args)
     {
         string response = await Api.createUser(usernameBox.Text,passwordBox.Text);
 
@@ -29,7 +29,7 @@ public partial class MainWindow : Window
 
         Console.WriteLine(response);
     }
-    public async void LogIn(object sender, RoutedEventArgs args)
+    public async void logIn(object sender, RoutedEventArgs args)
     {
         string response = await Api.logIn(usernameBox.Text,passwordBox.Text);
 
