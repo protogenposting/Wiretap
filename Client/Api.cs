@@ -24,7 +24,7 @@ public static class Api
     /// </summary>
     /// <param name="username">The username to give</param>
     /// <param name="password">The password to give</param>
-    /// <returns>The response from the api on if you did everything right</returns>
+    /// <returns>The response from the api</returns>
     public static async Task<string> createUser(string username, string password)
     {
         var values = new Dictionary<string, string>
