@@ -6,7 +6,10 @@
         x:Class="Client.MainWindow"
         Title="Client">
     <StackPanel Margin="20">
-        <Button Click="ClickHandler">Press Me!</Button>
-        <TextBlock Margin="0 10" x:Name="message">Ready...</TextBlock>
+        <TextBox x:Name="usernameBox" Watermark="Enter your username"/>
+        <TextBox x:Name="passwordBox" PasswordChar="*" Watermark="Enter your password"/>
+        <Button Click="SignUp">Sign Up</Button>
+        <Button Click="LogIn">Login</Button>
+        <TextBlock Margin="0 10" x:Name="message"></TextBlock>
     </StackPanel>
 </Window>

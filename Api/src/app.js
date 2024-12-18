@@ -10,16 +10,6 @@ class Session
     }
 }
 
-class LeaderboardEntry
-{ 
-    constructor(_username,_pp,_accuracy)
-    {
-        this.username = _username
-        this.pp = _pp
-        this.accuracy = _accuracy
-    }
-}
-
 const databaseName='app.db'
 
 //load in the database
@@ -117,9 +107,9 @@ app.post(apiPath+'newUser',(req,res) => {
         return 0
     }
     
-    const insertData = db.prepare("INSERT INTO users (name, username, password, pp) VALUES (?, ?, ?, ?)");
+    const insertData = db.prepare("INSERT INTO users (name, username, password) VALUES (?, ?, ?)");
     
-    var result = insertData.run(req.body.name,req.body.username,req.body.password,0)
+    var result = insertData.run(req.body.name,req.body.username,req.body.password)
     
     res.send(result)
 })
