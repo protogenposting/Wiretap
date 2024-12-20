@@ -10,6 +10,15 @@ class Session
     }
 }
 
+class Server
+{
+    constructor(_name)
+    {
+        this.name = _name
+        this.channels = []
+    }
+}
+
 const databaseName='app.db'
 
 //load in the database
@@ -31,11 +40,14 @@ const port = 3000;
 const apiPath='/api/'
 
 //activate multer
-const directory = "uploads/"
+const uploadDirectory = "uploads/"
 
 const fileDirectory = "files/"
 
-const upload = multer({ dest: directory })
+const upload = multer({ dest: uploadDirectory })
+
+//server creation
+const serverDirectory = "servers/"
 
 //create the tables if they don't exist
 const query = `
@@ -49,6 +61,10 @@ const query = `
         id INTEGER PRIMARY KEY UNIQUE,
         name STRING NOT NULL,
         uploader STRING NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS servers (
+        id INTEGER PRIMARY KEY UNIQUE,
+        name STRING NOT NULL
     );
 `;
 
@@ -160,7 +176,7 @@ app.post(apiPath+'fileUpload', upload.single('file'),(req,res) => {
         
         var result = insertData.run(fileName)
 
-        fs.copyFile(directory+name, fileName, (err) => {
+        fs.copyFile(uploadDirectory+name, fileName, (err) => {
             if (err) throw err;
             console.log('File was copied to destination');
         });
@@ -170,13 +186,35 @@ app.post(apiPath+'fileUpload', upload.single('file'),(req,res) => {
         res.sendStatus(403)
     }
     
-    fs.unlink(directory+name, (err) => {
+    fs.unlink(uploadDirectory+name, (err) => {
         if (err) throw err;
         console.log('File was deleted');
     });
 })
 
 //TODO:make it so you can download files too
+//#endregion
+
+//#region server stuff
+app.post(apiPath+'createServer', (req,res) => {
+    const session = JSON.parse(req.headers.session.toString())
+    if(verify_session_key(session.session,session.username))
+    {
+        res.sendStatus(200)
+
+        var server = new Server(req.body.serverName)
+
+        db.prepare("INSERT INTO servers (name) VALUES (?)").run(server.name);
+
+        JSON.stringify(server)
+
+        fs.writeFile(serverDirectory)
+    }
+    else
+    {
+        res.sendStatus(403)
+    }
+})
 //#endregion
 
 /**
